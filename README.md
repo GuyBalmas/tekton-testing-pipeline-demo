@@ -1,11 +1,11 @@
 # Tekton Testing Pipeline Demo
 
 ### Logic:
-1. get the tar.gz file from flux git repo (supplied as an input).
-2. unzip tar.gz
-3. [parallel] run unit-tests (maven/gradle/go/.net-core)
-4. [parallel] run lint tests
-5. fail the pipline if any of the 2 steps fail (PASS = if and only if both pass).
+1. Get the `tar.gz` file from `flux` git repo (supplied as an input).
+2. Unzip `tar.gz`.
+3. [parallel] Run unit-tests (supported frameworks: maven/gradle/go/.net-core)
+4. [parallel] Run lint tests
+5. **Fail** the pipline if any of the 2 steps fail, **Pass** if and only if both unit-Tests and Lint-Tests pass.
 
 ### Design:
 ![](design.png)
@@ -38,37 +38,37 @@ export GITHUB_USER=<your-username>
 # Install Flux controller on the cluster
 flux bootstrap github \
   --owner=$GITHUB_USER \
-  --repository=flux-infrastructure \
+  --repository=tekton-testing-pipeline-demo \
   --branch=main \
-  --path=clusters/my-cluster \
+  --path=flux \
   --read-write-key \
   --personal
 ```
 
 ### Step 2 - Deploy pipeline resources using `flux`
-Copy the content of `flux/` folder into the git repo `flux` bootstrapped.
-Make sure to copy the files under the `--path` specified (`clusters/my-cluster`).
+Now we need to copy the content of `flux/` folder into the git repo `flux` bootstrapped.
+Because we bootstrapped this repo, we can just let `flux` reconcile znd do the work for us.
 
-The `flux-infrastructure` repo file tree should look like this:
+The repository's files' tree should look something like this:
 ```bash
-clusters/
+tekton-testing-pipeline-demo/
   |
-  |--- my-cluster/
+  |--- flux/
           |
-          |--- flux-system/  # contains `flux` resources
+          |--- flux-system/  # contains `flux` resources, createed at bootstrap.
           |--- source-repos/ # contains `flux` source git repos
           |--- tekton/       # contains `Tekton` resources for the testing pipeline
                 |
                 |--- pipelines/
                 |--- tasks/
 ```
-`commit` and `push` the changes before and trigger `flux` reconciliation:
+Trigger `flux` reconciliation:
 ```bash
 # Reconcile
 flux reconcile kustomization flux-system --with-source
 ```
 
-Validate source repos:
+Validate source repos are created:
 ```bash
 flux get source git -A
 
