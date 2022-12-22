@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: testing-pipeline
+  namespace: default
 spec:
   description: |
     This pipeline clones a tar.gz file with the fetched data from a Git repository, runs unit tests and lint tests.

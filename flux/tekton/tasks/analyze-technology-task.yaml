@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: analyze-technology
+  namespace: default
 spec:
   params:
   - name: SOURCE_PATH

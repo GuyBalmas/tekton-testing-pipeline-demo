@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: clone-unpack-tar
+  namespace: default
 spec:
   params:
     - name: TAR_URL
