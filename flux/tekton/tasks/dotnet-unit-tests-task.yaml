@@ -1,0 +1,39 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: dotnet-unit-tests
+spec:
+  params:
+    - name: SOURCE_PATH
+      type: string
+  workspaces:
+    - name: shared-data
+  results:
+    - name: pass
+  steps:
+    - image: mcr.microsoft.com/dotnet/sdk:6.0 # mcr.microsoft.com/dotnet/core/sdk:3.1 # mcr.microsoft.com/dotnet/sdk:7.0 # mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
+      workingDir: $(workspaces.shared-data.path)/$(params.SOURCE_PATH)
+      onError: stopAndFail
+      name: run-tests
+      script: |
+        #!/bin/bash 
+        echo ">>> Unit-Tests:"
+        dotnet test
+        if [[ $? -ne 0 ]]
+        then
+          echo -e "\n\n[RESULT] ----------------------------------------------------------------------"
+          echo -n "Passed all Unit-Tests: "
+          echo -n false | tee $(results.pass.path)
+          echo -e "\nExporting Unit-Test result into $(workspaces.shared-data.path)/unit-tests.result"
+          echo "failed" > $(workspaces.shared-data.path)/unit-tests.result
+          exit 
+        else
+          echo -e "\n\n[RESULT] ----------------------------------------------------------------------"
+          echo -n "Passed all Unit-Tests: "
+          echo -n true | tee $(results.pass.path)
+          echo -e "\nExporting Unit-Test result into $(workspaces.shared-data.path)/unit-tests.result"
+          echo "passed" > $(workspaces.shared-data.path)/unit-tests.result
+          exit
+        fi
+        echo ">>> Done executing Unit-Tests"
+        exit

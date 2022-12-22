@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: dotnet-example-app
+  namespace: default
+spec:
+  interval: 5m0s
+  url: https://github.com/GuyBalmas/aspnet-core-tests.git # WORKING: https://github.com/gpeipman/AspNetCoreTests.git
+  ref:
+    branch: master

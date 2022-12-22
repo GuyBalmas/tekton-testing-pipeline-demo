@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: lint-tests
+spec:
+  params:
+  - name: SOURCE_PATH
+    type: string
+#  results:
+#  - name: technology
+  workspaces:
+  - name: shared-data
+  results:
+    - name: pass
+  steps:
+    - image: docker.io/guybalmas/yamllint:1.0.0@sha256:926a3779dfa6c8363ea5f2ef60ddeb706dba2f91831adcb9720e77902540eff4
+      workingDir: $(workspaces.shared-data.path)/$(params.SOURCE_PATH)
+      onError: stopAndFail
+      name: lint-yaml-files
+      script: |
+        #!/usr/bin/env bash
+        echo ">>> Lint-Tests"
+        yamllint -f colored .
+        if [[ $? -ne 0 ]] 
+        then
+          echo -e "\n\n[RESULT] ----------------------------------------------------------------------"
+          echo -n "Failed all Lint-Tests: "
+          echo -n false | tee $(results.pass.path)
+          echo -e "\nExporting Lint-Test result into $(workspaces.shared-data.path)/lint-tests.result"
+          echo "failed" > ../../lint-tests.result
+          exit 1
+        else
+          echo -e "\n\n[RESULT] ----------------------------------------------------------------------"
+          echo -n "Passed all Lint-Tests: "
+          echo -n true | tee $(results.pass.path)
+          echo -e "\nExporting Lint-Test result into $(workspaces.shared-data.path)/lint-tests.result"
+          echo "passed" > ../../lint-tests.result
+          exit 0
+        fi
+        exit 2

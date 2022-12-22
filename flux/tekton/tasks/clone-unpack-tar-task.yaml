@@ -1,0 +1,52 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: clone-unpack-tar
+spec:
+  params:
+    - name: TAR_URL
+      type: string
+#  resources:
+#    inputs:
+#      - name: tar-url
+#        type: string
+#    outputs:
+#      - name: source-file-path
+#        type: string
+  workspaces:
+    - name: shared-data
+  results:
+    - name: source_path
+
+  steps:
+    - image: docker.io/guybalmas/ubuntu-utils:1.0.0@sha256:8a47b0857f3ba3fb1f65d42c918ed7a937bb1e1857b60f2f79d22ca0299a2fa9 # contains curl
+      name: get-source-tar
+      workingDir: $(workspaces.shared-data.path)
+      script: |
+        #!/usr/bin/env bash
+        rm -rf source-code
+        mkdir source-code && cd source-code
+        echo ">>> Cloning and unpacking tar.gz file:"
+        echo ">>> Downloading artifact: $(params.TAR_URL)"
+        curl $(params.TAR_URL) --output app.tar.gz
+
+    - image: ubuntu # contains bash
+      name: unpack-tar
+      workingDir: $(workspaces.shared-data.path)
+      script: |
+        #!/usr/bin/env bash
+        echo ">>> Unpacking artifact"
+        cd $(workspaces.shared-data.path)/source-code
+        mkdir example-app
+        tar -xvzf app.tar.gz -C example-app/
+        cd example-app
+        ls
+        echo "Source files full path: $PWD"
+        echo -n "Exporting 'source_path' result: "
+        echo -n source-code/example-app | tee $(results.source_path.path)
+#      volumeMounts:
+#        - name: my-volume
+#          mountPath: /var/my-volume
+#  volumes:
+#    - name: my-volume
+#      emptyDir: {}

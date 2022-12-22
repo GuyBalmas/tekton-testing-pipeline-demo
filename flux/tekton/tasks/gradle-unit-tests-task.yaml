@@ -1,0 +1,38 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: gradle-unit-tests
+spec:
+  params:
+    - name: SOURCE_PATH
+      type: string
+  workspaces:
+    - name: shared-data
+  results:
+    - name: pass
+  steps:
+    - image: docker.io/gradle:jdk17@sha256:4f4c10efcc484311a0065ccbb0b17c98d0ff58dd72521df0424e3084fa9e6044 # gcr.io/cloud-builders/mvn@sha256:57523fc43394d6d9d2414ee8d1c85ed7a13460cbb268c3cd16d28cfb3859e641
+      workingDir: $(workspaces.shared-data.path)/$(params.SOURCE_PATH)
+      onError: stopAndFail
+      name: run-tests
+      script: |
+        #!/usr/bin/env bash
+        echo ">>> Unit-Tests"
+        gradle clean test --info
+        if [[ $? -ne 0 ]] 
+        then
+          echo -e "\n\n[RESULT] ----------------------------------------------------------------------"
+          echo -n "Passed all Unit-Tests: "
+          echo -n false | tee $(results.pass.path)
+          echo -e "\nExporting Unit-Test result into $(workspaces.shared-data.path)/unit-tests.result"
+          echo "failed" > $(workspaces.shared-data.path)/unit-tests.result
+          exit 1
+        else
+          echo -e "\n\n[RESULT] ----------------------------------------------------------------------"
+          echo -n "Passed all Unit-Tests: "
+          echo -n true | tee $(results.pass.path)
+          echo -e "\nExporting Unit-Test result into $(workspaces.shared-data.path)/unit-tests.result"
+          echo "passed" > $(workspaces.shared-data.path)/unit-tests.result
+          exit 0
+        fi
+        exit 2

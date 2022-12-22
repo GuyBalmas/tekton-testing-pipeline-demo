@@ -1,0 +1,120 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: testing-pipeline
+spec:
+  description: |
+    This pipeline clones a tar.gz file with the fetched data from a Git repository, runs unit tests and lint tests.
+  params:
+    - name: TAR_URL
+      type: string
+
+  workspaces:
+    - name: shared-data
+
+  tasks:
+    - name: clone-unpack-tar
+      taskRef:
+        name: clone-unpack-tar
+      workspaces:
+      - name: shared-data
+        workspace: shared-data
+      params:
+        - name: TAR_URL
+          value: $(params.TAR_URL)
+
+    - name: analyze-technology
+      taskRef:
+        name: analyze-technology
+      runAfter: [ "clone-unpack-tar" ]
+      workspaces:
+      - name: shared-data
+        workspace: shared-data
+      params:
+        - name: SOURCE_PATH
+          value: $(tasks.clone-unpack-tar.results.source_path)
+
+    - name: maven-unit-tests
+      taskRef:
+        name: maven-unit-tests
+      runAfter: [ "analyze-technology" ]
+      when:
+        - input: $(tasks.analyze-technology.results.technology)
+          operator: in
+          values: [ "maven" ]
+      workspaces:
+        - name: shared-data
+          workspace: shared-data
+      params:
+        - name: SOURCE_PATH
+          value: $(tasks.clone-unpack-tar.results.source_path)
+
+    - name: gradle-unit-tests
+      taskRef:
+        name: gradle-unit-tests
+      runAfter: [ "analyze-technology" ]
+      when:
+        - input: $(tasks.analyze-technology.results.technology)
+          operator: in
+          values: [ "gradle" ]
+      workspaces:
+        - name: shared-data
+          workspace: shared-data
+      params:
+        - name: SOURCE_PATH
+          value: $(tasks.clone-unpack-tar.results.source_path)
+
+    - name: golang-unit-tests
+      taskRef:
+        name: golang-unit-tests
+      runAfter: [ "analyze-technology" ]
+      when:
+        - input: $(tasks.analyze-technology.results.technology)
+          operator: in
+          values: [ "golang" ]
+      workspaces:
+        - name: shared-data
+          workspace: shared-data
+      params:
+        - name: SOURCE_PATH
+          value: $(tasks.clone-unpack-tar.results.source_path)
+
+    - name: dotnet-unit-tests
+      taskRef:
+        name: dotnet-unit-tests
+      runAfter: [ "analyze-technology" ]
+      when:
+        - input: $(tasks.analyze-technology.results.technology)
+          operator: in
+          values: [ "dotnet" ]
+      workspaces:
+        - name: shared-data
+          workspace: shared-data
+      params:
+        - name: SOURCE_PATH
+          value: $(tasks.clone-unpack-tar.results.source_path)
+
+    - name: lint-tests
+      taskRef:
+        name: lint-tests
+      runAfter: [ "analyze-technology" ]
+      workspaces:
+        - name: shared-data
+          workspace: shared-data
+      params:
+        - name: SOURCE_PATH
+          value: $(tasks.clone-unpack-tar.results.source_path)
+
+
+  finally:
+    - name: tests-results
+      taskRef:
+        Name: tests-results
+      workspaces:
+        - name: shared-data
+          workspace: shared-data
+      params:
+        - name: aggregateTasksStatus
+          value: $(tasks.status)
+        - name: technology
+          value: $(tasks.analyze-technology.results.technology)

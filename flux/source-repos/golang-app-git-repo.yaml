@@ -1,0 +1,11 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: golang-example-app
+  namespace: default
+spec:
+  interval: 5m0s
+  url: https://github.com/sagikazarmark/modern-go-application.git
+#  url: https://github.com/gothinkster/golang-gin-realworld-example-app.git
+  ref:
+    branch: main
