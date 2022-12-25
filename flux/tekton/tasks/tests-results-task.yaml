@@ -23,6 +23,7 @@ spec:
         echo -e ">>> Params:\naggregateTasksStatus = $(params.aggregateTasksStatus)\ntechnology = $(params.technology)"
         echo "Unit-Tests results: $(cat unit-tests.result)"
         echo "Lint-Tests results: $(cat lint-tests.result)"
+        echo "Pipeline Duration: $(.status.duration)"
         if [[ $(params.aggregateTasksStatus) == "Succeeded" || $(params.aggregateTasksStatus) == "Completed"  ]]
         then
           echo "######################## Passed Testing Pipeline! ########################"
