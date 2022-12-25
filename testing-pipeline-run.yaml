@@ -18,11 +18,11 @@ spec:
             requests:
               storage: 1Gi
   params:
-    - name: TAR_URL
-      value: http://source-controller.flux-system.svc.cluster.local./gitrepository/default/maven-example-app/latest.tar.gz
+#    - name: TAR_URL
+#      value: http://source-controller.flux-system.svc.cluster.local./gitrepository/default/maven-example-app/latest.tar.gz
 #    - name: TAR_URL
 #      value:  http://source-controller.flux-system.svc.cluster.local./gitrepository/default/gradle-example-app/latest.tar.gz
-#    - name: TAR_URL
-#      value: http://source-controller.flux-system.svc.cluster.local./gitrepository/default/golang-example-app/latest.tar.gz
+    - name: TAR_URL
+      value: http://source-controller.flux-system.svc.cluster.local./gitrepository/default/golang-example-app/latest.tar.gz
 #    - name: TAR_URL
 #      value: http://source-controller.flux-system.svc.cluster.local./gitrepository/default/dotnet-example-app/latest.tar.gz

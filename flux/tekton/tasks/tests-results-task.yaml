@@ -29,7 +29,15 @@ spec:
           exit 0
         else
           echo "######################## Failed Testing Pipeline! ########################"
-          echo "You have failed either Unit-Tests or Lint-Tests, please check your code!"
+          if [[ $(cat unit-tests.result) != "passed" ]]
+          then
+            echo "You have failed Unit-Tests, please check your code!"
+          elif [[ $(cat lint-tests.result) != "passed" ]]
+          then
+            echo "You have failed Lint-Tests, please check your code!"
+          else
+            echo "You have failed Unit-Tests and Lint-Tests, please check your code!"
+          fi
           exit 1
         fi
         exit 2
