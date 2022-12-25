@@ -13,7 +13,7 @@ spec:
   workspaces:
     - name: shared-data
   steps:
-    - image: ubuntu
+    - image: docker.io/guybalmas/ubuntu-utils:1.0.0@sha256:8a47b0857f3ba3fb1f65d42c918ed7a937bb1e1857b60f2f79d22ca0299a2fa9 # contains curl # ubuntu
       workingDir: $(workspaces.shared-data.path)
       name: summary
       script: |
