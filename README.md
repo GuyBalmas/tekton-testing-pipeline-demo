@@ -28,15 +28,15 @@
 ```bash
 curl -s https://fluxcd.io/install.sh | sudo bash 
 ```
-2. ##### Install `Tekton` pipelines:
+2. ##### Start a `minikube` cluster:
+```bash
+minikube start 
+```
+3. ##### Install `Tekton` pipelines:
 ```bash
 kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 
 kubectl get pods --namespace tekton-pipelines --watch
-```
-2. ##### Start a `minikube` cluster:
-```bash
-minikube start 
 ```
 
 ## Solution
@@ -100,7 +100,7 @@ kubectl create -f testing-pipeline-run.yaml
 tkn pipelinerun logs <pipelinerun-name> -f
 
 # For example
-tkn pipelinerun logs testing-pipeline-run-22xsd -f
+tkn pipelinerun logs testing-pipeline-run-dxnwx -f
 
 # Check the pipeline related tasks
 tkn pipeline describe testing-pipeline
@@ -127,7 +127,7 @@ kubectl create -f testing-pipeline-run.yaml
 tkn pipelinerun logs <pipelinerun-name> -f
 
 # For example
-tkn pipelinerun logs testing-pipeline-run-49gr7 -f
+tkn pipelinerun logs testing-pipeline-run-gtq7t -f
 ```
 
 ### Step 5 - (Optional) Deploy `Tekton` dashboard
@@ -137,4 +137,8 @@ kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboar
 kubectl get pods --namespace tekton-pipelines --watch
 
 kubectl -n tekton-pipelines port-forward svc/tekton-dashboard 9097:9097
+```
+Open browser:
+```bash
+http://localhost:9097/
 ```
