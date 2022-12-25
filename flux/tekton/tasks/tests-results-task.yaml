@@ -46,12 +46,12 @@ spec:
 
     - image: ubuntu
       workingDir: $(workspaces.shared-data.path)
-      name: calculate-run-time
+      name: total-run-time
       script: |
         #!/usr/bin/env bash
         diff=$(date -d "$(cat start.time)" +%s)
         now=$(date +%s)
-        echo $((now-diff)) | awk '{print int($1/60/60/24) " days, " int($1/60/60%24) " hours, " int($1/60%60) " minutes, " int($1%60) " seconds"}'
+        echo "Pipeline run time: $((now-diff))" | awk '{print int($1/60/60/24) " days, " int($1/60/60%24) " hours, " int($1/60%60) " minutes, " int($1%60) " seconds"}'
 #      volumeMounts:
 #        - name: my-volume
 #          mountPath: /var/my-volume

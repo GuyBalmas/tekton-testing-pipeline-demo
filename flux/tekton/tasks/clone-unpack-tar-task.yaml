@@ -25,6 +25,7 @@ spec:
       workingDir: $(workspaces.shared-data.path)
       script: |
         #!/usr/bin/env bash
+        echo "$(date)" > $(workspaces.shared-data.path)/start.time
         rm -rf source-code
         mkdir source-code && cd source-code
         echo ">>> Cloning and unpacking tar.gz file:"
@@ -45,7 +46,6 @@ spec:
         echo "Source files full path: $PWD"
         echo -n "Exporting 'source_path' result: "
         echo -n source-code/example-app | tee $(results.source_path.path)
-        echo "$(date)" > $(workspaces.shared-data.path)/start.time
 #      volumeMounts:
 #        - name: my-volume
 #          mountPath: /var/my-volume
