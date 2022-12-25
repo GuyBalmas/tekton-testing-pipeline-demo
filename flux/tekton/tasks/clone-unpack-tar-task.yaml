@@ -45,6 +45,7 @@ spec:
         echo "Source files full path: $PWD"
         echo -n "Exporting 'source_path' result: "
         echo -n source-code/example-app | tee $(results.source_path.path)
+        echo "$(date)" > $(workspaces.shared-data.path)/start.time
 #      volumeMounts:
 #        - name: my-volume
 #          mountPath: /var/my-volume

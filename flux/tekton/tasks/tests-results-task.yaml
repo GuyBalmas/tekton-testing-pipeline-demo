@@ -13,7 +13,7 @@ spec:
   workspaces:
     - name: shared-data
   steps:
-    - image: docker.io/guybalmas/ubuntu-utils:1.0.0@sha256:8a47b0857f3ba3fb1f65d42c918ed7a937bb1e1857b60f2f79d22ca0299a2fa9 # contains curl # ubuntu
+    - image: ubuntu # docker.io/guybalmas/ubuntu-utils:1.0.0@sha256:8a47b0857f3ba3fb1f65d42c918ed7a937bb1e1857b60f2f79d22ca0299a2fa9 # contains curl
       workingDir: $(workspaces.shared-data.path)
       name: summary
       script: |
@@ -23,8 +23,8 @@ spec:
         echo -e ">>> Params:\naggregateTasksStatus = $(params.aggregateTasksStatus)\ntechnology = $(params.technology)"
         echo "Unit-Tests results: $(cat unit-tests.result)"
         echo "Lint-Tests results: $(cat lint-tests.result)"
-        DURATION=$(curl http://tekton-pipelines-controller:9090/metrics | grep tekton_pipelines_controller_pipelinerun_duration_seconds_sum | head -n 1 | grep -oE '[0-9]+')
-        echo "Pipeline Duration: $DURATION seconds"
+        # DURATION=$(curl  http://tekton-pipelines-controller.tekton-pipelines.svc.cluster.local:9090/metrics | grep tekton_pipelines_controller_pipelinerun_duration_seconds_sum | head -n 1 | grep -oE '[0-9]+')
+        # echo "Pipeline Duration: $DURATION seconds"
         if [[ $(params.aggregateTasksStatus) == "Succeeded" || $(params.aggregateTasksStatus) == "Completed"  ]]
         then
           echo "######################## Passed Testing Pipeline! ########################"
@@ -44,13 +44,14 @@ spec:
         fi
         exit 2
 
-#    - image: ubuntu
-#      workingDir: $(workspaces.shared-data.path)
-#      name: calculate-run-time
-#      script: |
-#        #!/usr/bin/env bash
-#        DURATION=$(curl http://tekton-pipelines-controller:9090/metrics | grep tekton_pipelines_controller_pipelinerun_duration_seconds_sum | head -n 1 | grep -oE '[0-9]+')
-#        echo "Pipeline Duration: $DURATION"
+    - image: ubuntu
+      workingDir: $(workspaces.shared-data.path)
+      name: calculate-run-time
+      script: |
+        #!/usr/bin/env bash
+        diff=$(date -d "$(cat start.time)" +%s)
+        now=$(date +%s)
+        echo $((now-diff)) | awk '{print int($1/60/60/24) " days, " int($1/60/60%24) " hours, " int($1/60%60) " minutes, " int($1%60) " seconds"}'
 #      volumeMounts:
 #        - name: my-volume
 #          mountPath: /var/my-volume
