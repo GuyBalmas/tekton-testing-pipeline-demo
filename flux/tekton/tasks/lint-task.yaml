@@ -25,7 +25,7 @@ spec:
         if [[ $? -ne 0 ]] 
         then
           echo -e "\n\n[RESULT] ----------------------------------------------------------------------"
-          echo -n "Failed all Lint-Tests: "
+          echo -n "Passed all Lint-Tests: "
           echo -n false | tee $(results.pass.path)
           echo -e "\nExporting Lint-Test result into $(workspaces.shared-data.path)/lint-tests.result"
           echo "failed" > ../../lint-tests.result

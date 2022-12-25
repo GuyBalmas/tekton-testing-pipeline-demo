@@ -87,7 +87,7 @@ kubectl create -f testing-pipeline-run.yaml
 tkn pipelinerun logs <pipelinerun-name> -f
 
 # For example
-tkn pipelinerun logs testing-pipeline-run-fnpbh -f
+tkn pipelinerun logs testing-pipeline-run-dhcf4 -f
 
 # Check the pipeline related tasks
 tkn pipeline describe testing-pipeline

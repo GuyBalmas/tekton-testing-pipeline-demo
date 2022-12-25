@@ -12,7 +12,7 @@ spec:
   results:
     - name: pass
   steps:
-    - image: mcr.microsoft.com/dotnet/sdk:6.0 # mcr.microsoft.com/dotnet/core/sdk:3.1 # mcr.microsoft.com/dotnet/sdk:7.0 # mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
+    - image: mcr.microsoft.com/dotnet/sdk:6.0
       workingDir: $(workspaces.shared-data.path)/$(params.SOURCE_PATH)
       onError: stopAndFail
       name: run-tests

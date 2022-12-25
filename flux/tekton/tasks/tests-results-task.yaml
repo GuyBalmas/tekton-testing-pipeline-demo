@@ -23,7 +23,8 @@ spec:
         echo -e ">>> Params:\naggregateTasksStatus = $(params.aggregateTasksStatus)\ntechnology = $(params.technology)"
         echo "Unit-Tests results: $(cat unit-tests.result)"
         echo "Lint-Tests results: $(cat lint-tests.result)"
-        echo "Pipeline Duration: $(.status.duration)"
+        DURATION=$(curl http://tekton-pipelines-controller:9090/metrics | grep tekton_pipelines_controller_pipelinerun_duration_seconds_sum | head -n 1 | grep -oE '[0-9]+')
+        echo "Pipeline Duration: $DURATION seconds"
         if [[ $(params.aggregateTasksStatus) == "Succeeded" || $(params.aggregateTasksStatus) == "Completed"  ]]
         then
           echo "######################## Passed Testing Pipeline! ########################"
@@ -42,6 +43,14 @@ spec:
           exit 1
         fi
         exit 2
+
+#    - image: ubuntu
+#      workingDir: $(workspaces.shared-data.path)
+#      name: calculate-run-time
+#      script: |
+#        #!/usr/bin/env bash
+#        DURATION=$(curl http://tekton-pipelines-controller:9090/metrics | grep tekton_pipelines_controller_pipelinerun_duration_seconds_sum | head -n 1 | grep -oE '[0-9]+')
+#        echo "Pipeline Duration: $DURATION"
 #      volumeMounts:
 #        - name: my-volume
 #          mountPath: /var/my-volume
