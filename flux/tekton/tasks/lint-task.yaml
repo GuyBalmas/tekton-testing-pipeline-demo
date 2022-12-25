@@ -7,8 +7,6 @@ spec:
   params:
   - name: SOURCE_PATH
     type: string
-#  results:
-#  - name: technology
   workspaces:
   - name: shared-data
   results:

@@ -1,27 +1,40 @@
 # Tekton Testing Pipeline Demo
 
-### Logic:
+<!-- TOC -->
+* [Tekton Testing Pipeline Demo](#tekton-testing-pipeline-demo)
+    * [Logic](#logic-)
+    * [Design](#design-)
+    * [Prerequisites](#prerequisites-)
+  * [Solution](#solution)
+    * [Step 1 - Configure `flux`](#step-1---configure-flux)
+    * [Step 2 - Deploy pipeline resources using `flux`](#step-2---deploy-pipeline-resources-using-flux)
+    * [Step 3 - Trigger a `PipelineRun`](#step-3---trigger-a-pipelinerun)
+    * [Step 4 - Run `Pipeline` for all application types](#step-4---run-pipeline-for-all-application-types)
+    * [Step 5 - (Optional) Deploy `Tekton` dashboard](#step-5----optional--deploy-tekton-dashboard)
+<!-- TOC -->
+
+## Logic
 1. Get the `tar.gz` file from `flux` git repo (supplied as an input).
 2. Unzip `tar.gz`.
 3. [parallel] Run unit-tests (supported frameworks: maven/gradle/go/.net-core)
 4. [parallel] Run lint tests
 5. **Fail** the pipline if any of the 2 steps fail, **Pass** if and only if both unit-Tests and Lint-Tests pass.
 
-### Design:
+## Design
 ![](design.png)
 
-### Prerequisites:
-1. Install `flux` CLI:
+## Prerequisites
+1. ##### Install `flux` CLI:
 ```bash
 curl -s https://fluxcd.io/install.sh | sudo bash 
 ```
-2. Install `Tekton` pipelines:
+2. ##### Install `Tekton` pipelines:
 ```bash
 kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 
 kubectl get pods --namespace tekton-pipelines --watch
 ```
-2. Start a minikube cluster with a Container Networking Interface:
+2. ##### Start a `minikube` cluster:
 ```bash
 minikube start 
 ```
@@ -87,7 +100,7 @@ kubectl create -f testing-pipeline-run.yaml
 tkn pipelinerun logs <pipelinerun-name> -f
 
 # For example
-tkn pipelinerun logs testing-pipeline-run-4kjww -f
+tkn pipelinerun logs testing-pipeline-run-22xsd -f
 
 # Check the pipeline related tasks
 tkn pipeline describe testing-pipeline
@@ -115,4 +128,13 @@ tkn pipelinerun logs <pipelinerun-name> -f
 
 # For example
 tkn pipelinerun logs testing-pipeline-run-49gr7 -f
+```
+
+### Step 5 - (Optional) Deploy `Tekton` dashboard
+```bash
+kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
+
+kubectl get pods --namespace tekton-pipelines --watch
+
+kubectl -n tekton-pipelines port-forward svc/tekton-dashboard 9097:9097
 ```

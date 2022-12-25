@@ -37,9 +37,3 @@ spec:
           exit 0
         fi
         exit 2
-#      volumeMounts:
-#        - name: my-volume
-#          mountPath: /var/my-volume
-#  volumes:
-#    - name: my-volume
-#      emptyDir: {}
