@@ -100,7 +100,7 @@ kubectl create -f testing-pipeline-run.yaml
 tkn pipelinerun logs <pipelinerun-name> -f
 
 # For example
-tkn pipelinerun logs testing-pipeline-run-dxnwx -f
+tkn pipelinerun logs testing-pipeline-run-wjkzp -f
 
 # Check the pipeline related tasks
 tkn pipeline describe testing-pipeline
